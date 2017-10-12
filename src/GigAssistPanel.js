@@ -5,7 +5,8 @@ import OutputPanel from './OutputPanel';
 export default class GigAssistPanel extends Component {
   state = {
     cities: ['nyc'],
-    query: '?is_paid=yes&query=testing'
+    query:
+      'cpg?query=%28js%7Cjavascript%7Cnode%7Creact%29+-affiliate+-tester&is_paid=yes'
   };
   updateCities = (cities: string[]) => {
     this.setState({ cities: cities });

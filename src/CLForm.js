@@ -40,20 +40,29 @@ export default class CLForm extends Component {
           placeholder="Enter terms you want to avoid, like wordpress, affiliate, test"
         />
         <FormGroup>
-          <Checkbox inline>1</Checkbox> <Checkbox inline>2</Checkbox>{' '}
-          <Checkbox inline>3</Checkbox>
+          <Checkbox inline selected>
+            Paid
+          </Checkbox>
+          <Checkbox inline>Titles only</Checkbox>
+          <Checkbox inline>Posted Today</Checkbox>
+          <Checkbox inline>Include Nearby</Checkbox>
+          <Checkbox inline>Bundle Duplicates</Checkbox>
         </FormGroup>
         <FormGroup controlId="formControlsSelectMultiple">
-          <ControlLabel>Select cities</ControlLabel>
+          <ControlLabel>CMD-Click to select multiple cities</ControlLabel>
           <FormControl componentClass="select" multiple>
-            <option value="select">select (multiple)</option>
-            <option value="other">...</option>
+            <option value="select">New York</option>
+            <option value="select">Philadelphia</option>
+            <option value="select">Chicago</option>
+            <option value="select">SF Bay Area</option>
+            <option value="select">Baltimore</option>
+            <option value="select">Boston</option>
+            <option value="select">Washington DC</option>
+            <option value="select">Providence</option>
+            <option value="select">Portland</option>
+            <option value="select">Seattle</option>
+            <option value="select">Los Angeles</option>
           </FormControl>
-        </FormGroup>
-
-        <FormGroup controlId="formControlsTextarea">
-          <ControlLabel>Textarea</ControlLabel>
-          <FormControl componentClass="textarea" placeholder="textarea" />
         </FormGroup>
 
         <Button type="submit">Submit</Button>

@@ -7,65 +7,134 @@ import {
   Checkbox,
   Button
 } from 'react-bootstrap';
-import './App.css';
 
 function FieldGroup({ id, label, help, ...props }) {
   return (
     <FormGroup controlId={id}>
       <ControlLabel>{label}</ControlLabel>
-      <FormControl {...props} />
       {help && <HelpBlock>{help}</HelpBlock>}
+      <FormControl {...props} />
     </FormGroup>
   );
 }
 
+type Props = {
+  updateCities: (cities: string[]) => {},
+  updateQuery: (query: string) => {}
+};
 export default class CLForm extends Component {
-  state = { value: 'someText' };
-  updateFormValue = v => {
-    this.setState({ value: v.target.value });
+  props: Props;
+  state = {
+    includes: 'js,javascript,node,react',
+    excludes: 'tester,affiliate',
+    isPaid: true,
+    isTitlesOnly: false,
+    isPostedToday: false
+  };
+  _selectCity = null; // initialize ref
+  updateIncludes = event => {
+    this.setState({ includes: event.target.value });
+  };
+  updateExcludes = event => {
+    this.setState({ excludes: event.target.value });
+  };
+  toggleIsPaid = event => {
+    this.setState({ isPaid: event.target.value });
+  };
+  toggleIsTitlesOnly = event => {
+    this.setState({ isTitlesOnly: event.target.value });
+  };
+  toggleIsPostedToday = event => {
+    this.setState({ isPostedToday: event.target.value });
+  };
+  updateCities = event => {
+    const selected = [...this._selectCity]
+      .filter(option => option.selected)
+      .map(option => option.value);
+    this.props.updateCities(selected);
+  };
+  generateQuery = () => {
+    console.log('Submitting...');
+    const {
+      includes,
+      excludes,
+      isPaid,
+      isTitlesOnly,
+      isPostedToday
+    } = this.state;
+    const includesStr = includes.replace(',', '|');
+    const excludesStr = `-${excludes.replace(',', ' -')}`;
+    const isPaidStr = isPaid ? 'is_paid=yes' : '';
+    const isTitlesOnlyStr = isTitlesOnly ? 'srchType=T' : '';
+    const isPostedTodayStr = isPostedToday ? 'postedToday=1' : '';
+    const queryUrl = encodeURI(
+      `?${includesStr}&${excludesStr}&${isPaidStr}&${isTitlesOnlyStr}&${isPostedTodayStr}`
+    );
+    this.props.updateQuery(queryUrl);
   };
   render() {
+    const {
+      includes,
+      excludes,
+      isPaid,
+      isTitlesOnly,
+      isPostedToday
+    } = this.state;
     return (
       <form>
         <FieldGroup
           id="formControlsText"
           type="text"
           label="Include"
+          value={includes}
           placeholder="Enter skills, like javascript, react, python, nlp, mobile"
+          help="Separate with commas"
+          onChange={this.updateIncludes}
         />
         <FieldGroup
           id="formControlsText"
           type="text"
           label="Exclude"
+          value={excludes}
+          help="Separate with commas"
+          onChange={this.updateExcludes}
           placeholder="Enter terms you want to avoid, like wordpress, affiliate, test"
         />
         <FormGroup>
-          <Checkbox inline selected>
+          <ControlLabel>Options</ControlLabel>
+          <Checkbox value={isPaid} onChange={this.toggleIsPaid}>
             Paid
           </Checkbox>
-          <Checkbox inline>Titles only</Checkbox>
-          <Checkbox inline>Posted Today</Checkbox>
-          <Checkbox inline>Include Nearby</Checkbox>
-          <Checkbox inline>Bundle Duplicates</Checkbox>
+          <Checkbox value={isTitlesOnly} onChange={this.toggleIsTitlesOnly}>
+            Titles Only
+          </Checkbox>
+          <Checkbox value={isPostedToday} onChange={this.toggleIsPostedToday}>
+            Posted Today
+          </Checkbox>
         </FormGroup>
-        <FormGroup controlId="formControlsSelectMultiple">
-          <ControlLabel>CMD-Click to select multiple cities</ControlLabel>
-          <FormControl componentClass="select" multiple>
-            <option value="select">New York</option>
-            <option value="select">Philadelphia</option>
-            <option value="select">Chicago</option>
-            <option value="select">SF Bay Area</option>
-            <option value="select">Baltimore</option>
-            <option value="select">Boston</option>
-            <option value="select">Washington DC</option>
-            <option value="select">Providence</option>
-            <option value="select">Portland</option>
-            <option value="select">Seattle</option>
-            <option value="select">Los Angeles</option>
-          </FormControl>
-        </FormGroup>
+        <FieldGroup
+          componentClass="select"
+          multiple
+          label="Cities to query"
+          onChange={this.updateCities}
+          help="Cmd-click to select multiple"
+          inputRef={ref => (this._selectCity = ref)}
+        >
+          <option value="baltimore">Baltimore</option>
+          <option value="boston">Boston</option>
+          <option value="chicago">Chicago</option>
+          <option value="denver">Denver</option>
+          <option value="houston">Houston</option>
+          <option value="losangeles">Los Angeles</option>
+          <option value="newyork">New York</option>
+          <option value="philadelphia">Philadelphia</option>
+          <option value="sacramento">Sacramento</option>
+          <option value="seattle">Seattle</option>
+          <option value="sfbay">SF Bay Area</option>
+          <option value="washingtondc">Washington DC</option>
+        </FieldGroup>
 
-        <Button type="submit">Submit</Button>
+        <Button onClick={this.generateQuery}>Generate Queries</Button>
       </form>
     );
   }

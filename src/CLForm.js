@@ -54,7 +54,6 @@ export default class CLForm extends Component {
     this.props.updateCities(selected);
   };
   generateQuery = () => {
-    console.log('Submitting...');
     const {
       includes,
       excludes,
@@ -62,14 +61,12 @@ export default class CLForm extends Component {
       isTitlesOnly,
       isPostedToday
     } = this.state;
-    const includesStr = includes.replace(',', '|');
-    const excludesStr = `-${excludes.replace(',', ' -')}`;
-    const isPaidStr = isPaid ? 'is_paid=yes' : '';
-    const isTitlesOnlyStr = isTitlesOnly ? 'srchType=T' : '';
-    const isPostedTodayStr = isPostedToday ? 'postedToday=1' : '';
-    const queryUrl = encodeURI(
-      `?${includesStr}&${excludesStr}&${isPaidStr}&${isTitlesOnlyStr}&${isPostedTodayStr}`
-    );
+    const includesStr = encodeURI(`${includes.replace(/,/g, '|')}`); // ex. "ruby,python,matlab" => "ruby|python|matlab"
+    const excludesStr = encodeURI(`-${excludes.replace(/,/g, '+-')}`); // ex. "-test -affiliate" => "+-test+-affiliate"
+    const isPaidStr = isPaid ? '&is_paid=yes' : '';
+    const isTitlesOnlyStr = isTitlesOnly ? '&srchType=T' : '';
+    const isPostedTodayStr = isPostedToday ? '&postedToday=1' : '';
+    const queryUrl = `?query=%28${includesStr}%29+${excludesStr}${isPaidStr}${isTitlesOnlyStr}${isPostedTodayStr}`;
     this.props.updateQuery(queryUrl);
   };
   render() {
